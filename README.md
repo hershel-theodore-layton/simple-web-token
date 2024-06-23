@@ -19,8 +19,9 @@ $serialized = SimpleWebToken\sign(
 
 $token = SimpleWebToken\parse($serialized);
 
-$key = $your_key_store->loadKey($token->getUniqueKeys()
-  |> idx($$, 'com.example.secret_key_used', 'default'));
+$key = $your_key_store->loadKey(
+  $token->getUniqueKeys() |> idx($$, 'com.example.secret_key_used', 'default')
+);
 
 $state = $token->validate($key, \time());
 

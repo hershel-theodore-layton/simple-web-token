@@ -2,6 +2,38 @@
 
 _An implementation of the Simple Web Token specification._
 
+### Usage
+
+```HACK
+// This example assumes you have some `$your_key_store`,
+// which maps key names to keys.
+
+$serialized = SimpleWebToken\sign(
+  vec[
+    tuple('com.example.user_id', '4'),
+    tuple(SimpleWebToken\Token::EXPIRES_ON, (string)(\time() + 300)),
+    tuple('com.example.secret_key_used', '#1')
+  ],
+  SimpleWebToken\this_is_the_secret_key($your_key_store->load('#1')),
+);
+
+$token = SimpleWebToken\parse($serialized);
+
+$key = $your_key_store->loadKey($token->getUniqueKeys()
+  |> idx($$, 'com.example.secret_key_used', 'default'));
+
+$state = $token->validate($key, \time());
+
+switch ($state) {
+  case SimpleWebToken\Validity::VALID:
+  case SimpleWebToken\Validity::EXPIRED:
+  case SimpleWebToken\Validity::INVALID:
+}
+
+// Or the shorthand
+$token->isOkay($key, \time()); // This returns `true` for `::VALID` only.
+```
+
 ### License
 
 This code is licensed under the [MIT License](./LICENSE), but note,

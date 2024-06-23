@@ -17,8 +17,8 @@ final class HashHmacTest extends HackTest {
       // every single two byte sequence
       Vec\range(0, 1 << 15) |> Vec\map($$, $v ==> chr($v >> 8).chr($v & 0xff)),
       // many sequences of random length and random contents
-      Vec\range(0, 10_000)
-        |> Vec\map($$, $_ ==> PseudoRandom\string(PseudoRandom\int(3, 10_000))),
+      Vec\range(0, 10000)
+        |> Vec\map($$, $_ ==> PseudoRandom\string(PseudoRandom\int(3, 10000))),
     )
       |> Vec\map($$, $str ==> tuple($str));
   }
@@ -39,12 +39,12 @@ final class HashHmacTest extends HackTest {
       Vec\range(0, 1 << 15)
         |> Vec\map($$, $v ==> tuple(chr($v >> 8), chr($v & 0xff))),
       // many keys and data sequences of random length and random contents
-      Vec\range(0, 100_000)
+      Vec\range(0, 100000)
         |> Vec\map(
           $$,
           $_ ==> tuple(
-            PseudoRandom\string(PseudoRandom\int(3, 10_000)),
-            PseudoRandom\string(PseudoRandom\int(3, 10_000)),
+            PseudoRandom\string(PseudoRandom\int(3, 10000)),
+            PseudoRandom\string(PseudoRandom\int(3, 10000)),
           ),
         ),
     )

@@ -35,6 +35,24 @@ switch ($state) {
 $token->isOkay($key, \time()); // This returns `true` for `::VALID` only.
 ```
 
+### Performance vs. purity
+
+The native functions `\hash()` and `\hash_hmac()` are not pure in hhvm version 4.172
+and below (the most recent version released to date). `\hash()` has been made pure
+in October 2023. This repository includes `SimpleWebToken\sha256_pure()` as
+a replacement for `\hash()`, which is pure.
+
+When running in repo auth mode, the jit will kick in and make the performance of
+this polyfill about 20% of the native `\hash()` function. The performance deficit
+is greater before the jit has optimized it, especially when not running in repo
+auth mode. If you have a very high traffic to your site and CPU cycles are scarce,
+you will definitely fell the hit of the unoptimized bytecodes shuffling bytes
+around. You may opt to use `SimpleWebToken\sha256_native()` to regain all
+performance, at the cost of requiring `[defaults]`.
+
+If you are running a build of hhvm@next at or after [this commit](https://github.com/facebook/hhvm/commit/9ec4a4400535521c74ebc9db47dcdf7b9785a2bc)
+from October 2023. You can pass a native wrapper with a pure context.
+
 ### License
 
 This code is licensed under the [MIT License](./LICENSE), but note,

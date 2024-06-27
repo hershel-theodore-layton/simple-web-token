@@ -119,7 +119,14 @@ function consume_chunk(
   ptr_t $ptr_p,
   const_uint8_t_x $p,
 )[]: void {
-  $ah = $h;
+  $ah0 = $h[0];
+  $ah1 = $h[1];
+  $ah2 = $h[2];
+  $ah3 = $h[3];
+  $ah4 = $h[4];
+  $ah5 = $h[5];
+  $ah6 = $h[6];
+  $ah7 = $h[7];
   $w = vec[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   for ($i = 0; $i < 4; $i++) {
@@ -139,30 +146,33 @@ function consume_chunk(
           ($w[($j + 14) & 0xf] >> 10);
         $w[$j] = cast_to_uint32_t($w[$j] + $s0 + $w[($j + 9) & 0xf] + $s1);
       }
-      $s1 =
-        right_rot($ah[4], 6) ^ right_rot($ah[4], 11) ^ right_rot($ah[4], 25);
-      $ch = ($ah[4] & $ah[5]) ^ ~$ah[4] & $ah[6];
+      $s1 = right_rot($ah4, 6) ^ right_rot($ah4, 11) ^ right_rot($ah4, 25);
+      $ch = ($ah4 & $ah5) ^ ~$ah4 & $ah6;
 
-      $temp1 = $ah[7] + $s1 + $ch + K[$i << 4 | $j] + $w[$j];
-      $s0 =
-        right_rot($ah[0], 2) ^ right_rot($ah[0], 13) ^ right_rot($ah[0], 22);
-      $maj = ($ah[0] & $ah[1]) ^ ($ah[0] & $ah[2]) ^ ($ah[1] & $ah[2]);
+      $temp1 = $ah7 + $s1 + $ch + K[$i << 4 | $j] + $w[$j];
+      $s0 = right_rot($ah0, 2) ^ right_rot($ah0, 13) ^ right_rot($ah0, 22);
+      $maj = ($ah0 & $ah1) ^ ($ah0 & $ah2) ^ ($ah1 & $ah2);
       $temp2 = $s0 + $maj;
 
-      $ah[7] = $ah[6];
-      $ah[6] = $ah[5];
-      $ah[5] = $ah[4];
-      $ah[4] = cast_to_uint32_t($ah[3] + $temp1);
-      $ah[3] = $ah[2];
-      $ah[2] = $ah[1];
-      $ah[1] = $ah[0];
-      $ah[0] = cast_to_uint32_t($temp1 + $temp2);
+      $ah7 = $ah6;
+      $ah6 = $ah5;
+      $ah5 = $ah4;
+      $ah4 = cast_to_uint32_t($ah3 + $temp1);
+      $ah3 = $ah2;
+      $ah2 = $ah1;
+      $ah1 = $ah0;
+      $ah0 = cast_to_uint32_t($temp1 + $temp2);
     }
   }
 
-  for ($i = 0; $i < 8; $i++) {
-    $h[$i] = cast_to_uint32_t($h[$i] + $ah[$i]);
-  }
+  $h[0] = cast_to_uint32_t($h[0] + $ah0);
+  $h[1] = cast_to_uint32_t($h[1] + $ah1);
+  $h[2] = cast_to_uint32_t($h[2] + $ah2);
+  $h[3] = cast_to_uint32_t($h[3] + $ah3);
+  $h[4] = cast_to_uint32_t($h[4] + $ah4);
+  $h[5] = cast_to_uint32_t($h[5] + $ah5);
+  $h[6] = cast_to_uint32_t($h[6] + $ah6);
+  $h[7] = cast_to_uint32_t($h[7] + $ah7);
 }
 
 function sha_256_init()[]: Sha_256 {

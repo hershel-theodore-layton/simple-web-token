@@ -141,13 +141,13 @@ function consume_chunk(
       }
       $s1 =
         right_rot($ah[4], 6) ^ right_rot($ah[4], 11) ^ right_rot($ah[4], 25);
-      $ch = ($ah[4] & $ah[5]) ^ cast_to_uint32_t(~$ah[4]) & $ah[6];
+      $ch = ($ah[4] & $ah[5]) ^ ~$ah[4] & $ah[6];
 
-      $temp1 = cast_to_uint32_t($ah[7] + $s1 + $ch + K[$i << 4 | $j] + $w[$j]);
+      $temp1 = $ah[7] + $s1 + $ch + K[$i << 4 | $j] + $w[$j];
       $s0 =
         right_rot($ah[0], 2) ^ right_rot($ah[0], 13) ^ right_rot($ah[0], 22);
       $maj = ($ah[0] & $ah[1]) ^ ($ah[0] & $ah[2]) ^ ($ah[1] & $ah[2]);
-      $temp2 = cast_to_uint32_t($s0 + $maj);
+      $temp2 = $s0 + $maj;
 
       $ah[7] = $ah[6];
       $ah[6] = $ah[5];

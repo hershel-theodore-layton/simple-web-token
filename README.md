@@ -46,7 +46,7 @@ When running in repo auth mode, the jit will kick in and make the performance of
 this polyfill about 20% of the native `\hash()` function. The performance deficit
 is greater before the jit has optimized it, especially when not running in repo
 auth mode. If you have a very high traffic to your site and CPU cycles are scarce,
-you will definitely fell the hit of the unoptimized bytecodes shuffling bytes
+you will definitely feel the hit of the unoptimized bytecodes shuffling bytes
 around. You may opt to use `SimpleWebToken\sha256_native()` to regain all
 performance, at the cost of requiring `[defaults]`.
 

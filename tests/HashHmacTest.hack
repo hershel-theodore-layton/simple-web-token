@@ -8,7 +8,7 @@ use function Facebook\FBExpect\expect;
 use function chr;
 
 final class HashHmacTest extends HackTest {
-  public function provide_random_bytes(): vec<(string)> {
+  public function provide_random_bytes()[defaults]: vec<(string)> {
     return Vec\concat(
       // The empty sequence
       vec[''],
@@ -24,14 +24,14 @@ final class HashHmacTest extends HackTest {
   }
 
   <<DataProvider('provide_random_bytes')>>
-  public function test_sha256_pure(string $data): void {
+  public function test_sha256_pure(string $data)[defaults]: void {
     expect(SimpleWebToken\sha256_pure($data))->toEqual(
       SimpleWebToken\sha256_native($data),
     );
   }
 
   public function provide_random_keys_and_data(
-  ): vec<(string, SimpleWebToken\TSecretKey)> {
+  )[defaults]: vec<(string, SimpleWebToken\TSecretKey)> {
     return Vec\concat(
       // The empty cases
       vec[tuple('', ''), tuple('a', ''), tuple('', 'a')],
@@ -58,7 +58,7 @@ final class HashHmacTest extends HackTest {
   public function test_hash_hmac(
     string $data,
     SimpleWebToken\TSecretKey $secret_key,
-  ): void {
+  )[defaults]: void {
     // Using sha256_native for non-repo auth cold jit performance.
     // The test above `test_sha256_pure` expresses that they are interchangeable
     // with likeliness bordering on absolute certainty.

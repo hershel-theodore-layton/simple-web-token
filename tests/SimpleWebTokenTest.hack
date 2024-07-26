@@ -11,7 +11,7 @@ final class SimpleWebTokenTest extends HackTest {
   const int IN_FUTURE = 1719138711;
   const string SECRET_KEY = 'SECRET_KEY';
 
-  public function test_empty_token(): void {
+  public function test_empty_token()[defaults]: void {
     $serialized = SimpleWebToken\sign(vec[], static::secretKey());
     $token = SimpleWebToken\parse($serialized);
 
@@ -23,7 +23,7 @@ final class SimpleWebTokenTest extends HackTest {
     expect($token->getNonUniqueKeys())->toBeEmpty();
   }
 
-  public function test_token_expires_on_the_exact_second(): void {
+  public function test_token_expires_on_the_exact_second()[defaults]: void {
     $serialized = SimpleWebToken\sign(
       vec[
         tuple('?', '!'),
@@ -47,7 +47,7 @@ final class SimpleWebTokenTest extends HackTest {
   }
 
   public function test_token_can_contain_duplicate_keys_and_order_is_retained(
-  ): void {
+  )[defaults]: void {
     $serialized = SimpleWebToken\sign(
       vec[
         tuple('?', '!'),
@@ -67,7 +67,8 @@ final class SimpleWebTokenTest extends HackTest {
     );
   }
 
-  public function test_if_you_change_the_token_it_becomes_invalid(): void {
+  public function test_if_you_change_the_token_it_becomes_invalid(
+  )[defaults]: void {
     $serialized =
       SimpleWebToken\sign(vec[tuple('a', 'b')], static::secretKey());
     $serialized[0] = 'z';
@@ -80,7 +81,7 @@ final class SimpleWebTokenTest extends HackTest {
   }
 
   public function test_if_you_dont_provide_a_hmac_your_token_is_invalid(
-  ): void {
+  )[defaults]: void {
     $serialized = SimpleWebToken\sign(vec[tuple('a', 'b')], static::secretKey())
       |> Str\slice($$, 0, Str\search($$, SimpleWebToken\Token::HMACSHA256));
     $token = SimpleWebToken\parse($serialized);

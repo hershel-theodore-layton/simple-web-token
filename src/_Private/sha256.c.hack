@@ -95,6 +95,7 @@ type Sha_256 = shape(
   'total_len' => uint64_t,
   'h' => vec<uint32_t>,
   'MEM' => vec<uint8_t>,
+  /*_*/
 );
 
 // hackfmt-ignore

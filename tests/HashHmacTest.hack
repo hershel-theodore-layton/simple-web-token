@@ -4,7 +4,7 @@ namespace HTL\SimpleWebToken\Tests;
 use namespace HH\Lib\{PseudoRandom, Vec};
 use namespace HTL\SimpleWebToken;
 use type Facebook\HackTest\{DataProvider, HackTest};
-use function Facebook\FBExpect\expect;
+use function HTL\Expect\expect;
 use function chr;
 
 final class HashHmacTest extends HackTest {

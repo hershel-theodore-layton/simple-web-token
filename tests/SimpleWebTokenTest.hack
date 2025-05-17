@@ -4,7 +4,7 @@ namespace HTL\SimpleWebToken\Tests;
 use namespace HH\Lib\Str;
 use namespace HTL\SimpleWebToken;
 use type Facebook\HackTest\HackTest;
-use function Facebook\FBExpect\expect;
+use function HTL\Expect\expect;
 
 final class SimpleWebTokenTest extends HackTest {
   const int RIGHT_NOW = 1719138710;

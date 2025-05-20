@@ -11,7 +11,7 @@ function hash_hmac_test(TestChain\Chain $chain)[]: TestChain\Chain {
   return $chain->group(__FUNCTION__)
     ->testWith2Params(
       'test_sha256_pure',
-      ()[leak_safe] ==> Vec\concat(
+      ()[defaults] ==> Vec\concat(
         // The empty sequence
         vec[''],
         // every single byte
@@ -35,7 +35,7 @@ function hash_hmac_test(TestChain\Chain $chain)[]: TestChain\Chain {
     )
     ->testWith2Params(
       'test_hash_hmac',
-      ()[leak_safe] ==> Vec\concat(
+      ()[defaults] ==> Vec\concat(
         // The empty cases
         vec[tuple('', ''), tuple('a', ''), tuple('', 'a')],
         // Every single byte key and single byte secret

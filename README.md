@@ -53,6 +53,11 @@ performance, at the cost of requiring `[defaults]`.
 If you are running a build of hhvm@next at or after [this commit](https://github.com/facebook/hhvm/commit/9ec4a4400535521c74ebc9db47dcdf7b9785a2bc)
 from October 2023. You can pass a native wrapper with a pure context.
 
+The latest release Oxygen is able to run on hhvm@next. This version of
+`sha256_native` `return hash('sha256', $data, true);` is now pure.
+You can create a pure version of `sha256_native` and hash your tokens ever
+so slightly faster.
+
 ### License
 
 This code is licensed under the [MIT License](./LICENSE), but note,

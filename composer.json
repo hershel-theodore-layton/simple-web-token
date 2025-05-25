@@ -3,7 +3,7 @@
   "description": "An implementation of the Simple Web Token specification.",
   "license": "MIT",
   "require": {
-    "hhvm": "^4.102"
+    "hhvm": ">=4.102"
   },
   "require-dev": {
     "hershel-theodore-layton/test-chain": "dev-master",

@@ -9,4 +9,4 @@ services:
         source: .
         target: /mnt/project
     ports:
-      - 48556:10641
+      - 48557:10641

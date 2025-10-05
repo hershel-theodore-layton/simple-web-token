@@ -16,9 +16,10 @@ function parse_x_www_form_encoded(string $input)[]: vec<(string, string)> {
       continue;
     }
 
-    $equals = Str\search($bytes, '=') ?? Str\length($bytes);
+    $equals = Str\search($bytes, '=');
     $name = Str\slice($bytes, 0, $equals) |> urldecode($$);
-    $value = Str\slice($bytes, $equals + 1) |> urldecode($$);
+    $value =
+      $equals is nonnull ? Str\slice($bytes, $equals + 1) |> urldecode($$) : '';
     $output[] = tuple($name, $value);
   }
 

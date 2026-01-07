@@ -3,6 +3,7 @@ namespace HTL\SimpleWebToken\Tests;
 
 use namespace HTL\{SimpleWebToken, TestChain};
 use function HTL\Expect\expect;
+use function urldecode;
 
 <<TestChain\Discover>>
 function decoding_test(TestChain\Chain $chain)[]: TestChain\Chain {
@@ -17,7 +18,9 @@ function decoding_test(TestChain\Chain $chain)[]: TestChain\Chain {
         tuple('%41=%42', vec[tuple('A', 'B')]),
       ],
       ($input, $expect) ==> {
-        expect(SimpleWebToken\_Private\parse_x_www_form_encoded($input))
+        expect(
+          SimpleWebToken\_Private\parse_x_www_form_encoded($input, urldecode<>),
+        )
           ->toEqual($expect);
       },
     );

@@ -1,14 +1,26 @@
 /** simple-web-token is MIT licensed, see /LICENSE. */
 namespace HTL\SimpleWebToken;
 
-use function base64_encode;
+use function urlencode;
 
+/**
+ * !!!Not spec-complaint!!! hmac should be encoded/decoded
+ *
+ * @deprecated Please use sign_strict(). This function may be removed in a
+ * future version to prevent tempting new users of this library. 
+ */
 function sign(
   vec<(string, string)> $data,
   TSecretKey $secret_key,
   (function(string)[_]: string) $hash_func = sha256_pure<>,
 )[ctx $hash_func]: string {
-  $no_hmac_swt = _Private\serialize_x_www_form_encoded($data);
-  $hmac = hash_hmac($hash_func, $no_hmac_swt, $secret_key) |> base64_encode($$);
-  return $no_hmac_swt.'&'.Token::HMACSHA256.'='.$hmac;
+  return sign_strict(
+    $data,
+    $secret_key,
+    shape(
+      'url_encoder_for_data' => urlencode<>,
+      'url_encoder_for_hmac' => ($dont_encode)[] ==> $dont_encode,
+    ),
+    $hash_func,
+  );
 }

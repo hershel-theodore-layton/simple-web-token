@@ -1,19 +1,17 @@
 /** simple-web-token is MIT licensed, see /LICENSE. */
 namespace HTL\SimpleWebToken;
 
-use namespace HH\Lib\Str;
+use function urldecode;
 
 /**
- * @see https://url.spec.whatwg.org/#urlencoded-parsing
+ * !!!Not spec-complaint!!! hmac should be encoded/decoded
+ *
+ * @deprecated Please use parse_strict(). This function may be removed in a
+ * future version to prevent tempting new users of this library. 
  */
 function parse(string $input)[]: Token {
-  $parts = Str\split($input, '&'.Token::HMACSHA256.'=', 2);
-  $no_hmac_swt = $parts[0];
-  $submitted_hmac = idx($parts, 1);
-
-  return new Token(
-    $no_hmac_swt,
-    $submitted_hmac,
-    _Private\parse_x_www_form_encoded($no_hmac_swt),
-  );
+  return parse_strict($input, shape(
+    'url_decoder_for_data' => urldecode<>,
+    'url_decoder_for_hmac' => $dont_decode ==> $dont_decode,
+  ));
 }

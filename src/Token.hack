@@ -15,6 +15,7 @@ final class Token {
     private string $raw,
     private ?string $hmac,
     vec<(string, string)> $pairs,
+    private Encoder $base64Encoder = base64_encode<>,
   )[] {
     list($unique, $non_unique) = Dict\group_by($pairs, $p ==> $p[0])
       |> Dict\partition($$, $group ==> C\count($group) === 1);
@@ -46,7 +47,8 @@ final class Token {
     int $unix_timestamp,
     (function(string)[_]: string) $hash_func = sha256_pure<>,
   )[ctx $hash_func]: Validity {
-    $hmac = hash_hmac($hash_func, $this->raw, $secret_key) |> base64_encode($$);
+    $hmac = hash_hmac($hash_func, $this->raw, $secret_key)
+      |> ($this->base64Encoder)($$);
     if ($this->hmac !== $hmac) {
       return Validity::INVALID;
     }

@@ -9,5 +9,6 @@ async function tests_async(
   return $controller
     ->addTestGroup(\HTL\SimpleWebToken\Tests\decoding_test<>)
     ->addTestGroup(\HTL\SimpleWebToken\Tests\hash_hmac_test<>)
-    ->addTestGroup(\HTL\SimpleWebToken\Tests\simple_web_token_test<>);
+    ->addTestGroup(\HTL\SimpleWebToken\Tests\simple_web_token_test<>)
+    ->addTestGroup(\HTL\SimpleWebToken\Tests\strict_spec_test<>);
 }

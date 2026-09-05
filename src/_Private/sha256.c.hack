@@ -24,7 +24,7 @@ function sha256_pure(string $string)[]: string {
 
 // #region C standard and some C to Hack helpers
 
-// C has arrays which are pointer to mutable memory.
+// C has arrays which are pointers to mutable memory.
 // In order to create by-reference-semantics in Hack,
 // I have modeled the C memory space as the member Sha_256['MEM'].
 type memory_t = vec<uint8_t>;

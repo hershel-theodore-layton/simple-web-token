@@ -4,7 +4,7 @@ namespace HTL\SimpleWebToken;
 use function urldecode;
 
 /**
- * !!!Not spec-complaint!!! hmac should be encoded/decoded
+ * !!!Not spec-compliant!!! HMAC should be encoded/decoded
  *
  * @deprecated Please use parse_strict(). This function may be removed in a
  * future version to prevent tempting new users of this library. 

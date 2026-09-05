@@ -14,12 +14,12 @@ function hash_hmac_test(TestChain\Chain $chain)[]: TestChain\Chain {
       ()[defaults] ==> Vec\concat(
         // The empty sequence
         vec[''],
-        // every single byte
+        // Every single byte
         Vec\range(0, 1 << 7) |> Vec\map($$, chr<>),
         // every single two byte sequence
         Vec\range(0, 1 << 15)
           |> Vec\map($$, $v ==> chr($v >> 8).chr($v & 0xff)),
-        // many sequences of random length and random contents
+        // Many sequences of random length and random contents
         Vec\range(0, 10000)
           |> Vec\map(
             $$,
@@ -41,7 +41,7 @@ function hash_hmac_test(TestChain\Chain $chain)[]: TestChain\Chain {
         // Every single byte key and single byte secret
         Vec\range(0, 1 << 15)
           |> Vec\map($$, $v ==> tuple(chr($v >> 8), chr($v & 0xff))),
-        // many keys and data sequences of random length and random contents
+        // Many keys and data sequences of random length and random contents
         Vec\range(0, 100000)
           |> Vec\map(
             $$,

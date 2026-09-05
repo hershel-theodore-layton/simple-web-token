@@ -5,9 +5,9 @@ use namespace HH\Lib\Str;
 use function chr, ord;
 
 /**
- * This function was added in the `HH` namespace with the release of hhvm 4.163,
+ * This function was added in the `HH` namespace with the release of HHVM 4.163,
  * but it was not added to the hhi files. Implementing it from scratch to maintain
- * support for older hhvm versions.
+ * support for older HHVM versions.
  */
 function str_bitwise_xor(string $a, string $b)[]: string {
   $length = Str\length($a);

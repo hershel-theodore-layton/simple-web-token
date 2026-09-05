@@ -2,7 +2,7 @@
 namespace HTL\SimpleWebToken;
 
 /**
- * The native `hash(...)` function in hhvm required `[defaults]` before October 2023.
+ * The native `hash(...)` function in HHVM required `[defaults]` before October 2023.
  * By writing it in Hack, we can call it from a pure (`[]`) context.
  * @see `sha256_native` for a non-pure faster implementation.
  */

@@ -17,12 +17,12 @@ function strict_spec_test(TestChain\Chain $chain)[]: TestChain\Chain {
         $strict = SimpleWebToken\sign_strict($fields, $secret_key);
         $weak = SimpleWebToken\sign($fields, $secret_key);
 
-        // Note, this token ends with %3D, which is a url encoded `=`.
-        // The `=` is the padding of the base64 operation.
+        // Note: this token ends with %3D, which is a URL-encoded `=`.
+        // The `=` is the padding of the Base64 operation.
         expect($strict)->toEqual(
           'Data=Datum&HMACSHA256=Dpis2gbXgK%2BihpApcvoSBzCc1yqNrYqmoUElx6uc%2BGI%3D',
         );
-        // Note, this token encodes the name data, but the hmac ends with a `=`.
+        // Note: this token encodes the name data, but the HMAC ends with a `=`.
         expect($weak)->toEqual(
           'Data=Datum&HMACSHA256=Dpis2gbXgK+ihpApcvoSBzCc1yqNrYqmoUElx6uc+GI=',
         );

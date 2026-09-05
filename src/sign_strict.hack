@@ -4,8 +4,8 @@ namespace HTL\SimpleWebToken;
 use function base64_encode, rawurlencode, urlencode;
 
 /**
- * @param $encoders, if one url encoder is passed, it is used for all
- * url encoder operations. If zero are passed, urlencode() is used for data,
+ * @param $encoders, if one URL encoder is passed, it is used for all
+ * URL-encoder operations. If zero are passed, urlencode() is used for data,
  * since the spec requires as such. 
  */
 function sign_strict(

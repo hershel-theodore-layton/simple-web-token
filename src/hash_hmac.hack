@@ -21,9 +21,9 @@ function this_is_the_secret_key(string $string)[]: TSecretKey {
  * Similar to `\hash_hmac()`, but it accepts a function for `$hash_func`.
  * If provided with a pure hash function, such as `SimpleWebToken\sha256_pure<>`,
  * the function becomes available from a pure context.
- * `\hash()` became pure in October 2023, which is after the release of hhvm 4.172,
- * the latest build of hhvm at the time of writing.
- * If you are using a version of hhvm with a pure implementation of `\hash()`,
+ * `\hash()` became pure in October 2023, which is after the release of HHVM 4.172,
+ * the latest build of HHVM at the time of writing.
+ * If you are using a version of HHVM with a pure implementation of `\hash()`,
  * you can forward calls to that instead.
  *
  * @param $hash_func returns its hash as binary (not hex or base64).

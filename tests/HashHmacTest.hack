@@ -4,7 +4,7 @@ namespace HTL\SimpleWebToken\Tests;
 use namespace HH\Lib\{PseudoRandom, Vec};
 use namespace HTL\{SimpleWebToken, TestChain};
 use function HTL\Expect\expect;
-use function chr;
+use function chr, hash_hmac;
 
 <<TestChain\Discover>>
 function hash_hmac_test(TestChain\Chain $chain)[]: TestChain\Chain {
@@ -63,7 +63,7 @@ function hash_hmac_test(TestChain\Chain $chain)[]: TestChain\Chain {
           SimpleWebToken\sha256_native<>,
           $data,
           $secret_key,
-        ))->toEqual(\hash_hmac('sha256', $data, $secret_key, true));
+        ))->toEqual(hash_hmac('sha256', $data, $secret_key, true));
       },
     );
 }

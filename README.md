@@ -8,7 +8,7 @@ _An implementation of the Simple Web Token specification._
 // This example assumes you have some `$your_key_store`,
 // which maps key names to keys.
 
-$serialized = SimpleWebToken\sign(
+$serialized = SimpleWebToken\sign_strict(
   vec[
     tuple('com.example.user_id', '4'),
     tuple(SimpleWebToken\Token::EXPIRES_ON, (string)(\time() + 300)),
@@ -17,7 +17,7 @@ $serialized = SimpleWebToken\sign(
   SimpleWebToken\this_is_the_secret_key($your_key_store->load('#1')),
 );
 
-$token = SimpleWebToken\parse($serialized);
+$token = SimpleWebToken\parse_strict($serialized);
 
 $key = $your_key_store->loadKey(
   $token->getUniqueKeys() |> idx($$, 'com.example.secret_key_used', 'default')

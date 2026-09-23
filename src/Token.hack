@@ -5,6 +5,8 @@ use namespace HH\Lib\{C, Dict, Str, Vec};
 use function base64_encode;
 
 final class Token {
+  const string ISSUER = 'Issuer';
+  const string AUDIENCE = 'Audience';
   const string EXPIRES_ON = 'ExpiresOn';
   const string HMACSHA256 = 'HMACSHA256';
 
@@ -53,11 +55,28 @@ final class Token {
       return Validity::INVALID;
     }
 
-    $expires_on = idx($this->unique, static::EXPIRES_ON)
-      |> $$ is null ? null : Str\to_int($$);
+    if (
+      C\contains_key($this->unique, static::HMACSHA256) ||
+      C\contains_key($this->nonUnique, static::HMACSHA256)
+    ) {
+      return Validity::INVALID;
+    }
 
-    if ($expires_on is nonnull && $expires_on <= $unix_timestamp) {
-      return Validity::EXPIRED;
+    foreach (vec[static::ISSUER, static::AUDIENCE, static::EXPIRES_ON] as $name) {
+      if (C\contains_key($this->nonUnique, $name)) {
+        return Validity::INVALID;
+      }
+    }
+
+    $raw_expires_on = idx($this->unique, static::EXPIRES_ON);
+    if ($raw_expires_on is nonnull) {
+      $expires_on = Str\to_int($raw_expires_on);
+      if ($expires_on is null || $expires_on < 0) {
+        return Validity::INVALID;
+      }
+      if ($expires_on <= $unix_timestamp) {
+        return Validity::EXPIRED;
+      }
     }
 
     return Validity::VALID;

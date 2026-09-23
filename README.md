@@ -19,7 +19,7 @@ $serialized = SimpleWebToken\sign_strict(
 
 $token = SimpleWebToken\parse_strict($serialized);
 
-$key = $your_key_store->loadKey(
+$key = $your_key_store->load(
   $token->getUniqueKeys() |> idx($$, 'com.example.secret_key_used', 'default')
 );
 
@@ -34,6 +34,11 @@ switch ($state) {
 // Or the shorthand
 $token->isOkay($key, \time()); // This returns `true` for `::VALID` only.
 ```
+
+`Issuer`, `Audience`, and `ExpiresOn` may occur at most once. This addresses a
+weakness, where a user controlled claim may collide with one of these reserved
+claims. Mixing user controller claims with developer controller claims is not
+recommended. Claims with the name `HMACSHA256` are rejected.
 
 ### Performance vs. purity
 

@@ -12,8 +12,9 @@ use function urlencode;
 function sign(
   vec<(string, string)> $data,
   TSecretKey $secret_key,
-  (function(string)[_]: string) $hash_func = sha256_pure<>,
+  ?(function(string)[_]: string) $hash_func = null,
 )[ctx $hash_func]: string {
+  $hash_func ??= sha256_pure<>;
   return sign_strict(
     $data,
     $secret_key,

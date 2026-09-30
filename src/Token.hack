@@ -10,6 +10,7 @@ final class Token {
   const string EXPIRES_ON = 'ExpiresOn';
   const string HMACSHA256 = 'HMACSHA256';
 
+  private Encoder $base64Encoder;
   private dict<string, string> $unique;
   private dict<string, vec<string>> $nonUnique;
 
@@ -17,8 +18,9 @@ final class Token {
     private string $raw,
     private ?string $hmac,
     vec<(string, string)> $pairs,
-    private Encoder $base64Encoder = base64_encode<>,
+    ?Encoder $base64_encoder = null,
   )[] {
+    $this->base64Encoder = $base64_encoder ?? base64_encode<>;
     list($unique, $non_unique) = Dict\group_by($pairs, $p ==> $p[0])
       |> Dict\partition($$, $group ==> C\count($group) === 1);
 
@@ -38,7 +40,7 @@ final class Token {
   public function isOkay(
     TSecretKey $secret_key,
     int $unix_timestamp,
-    (function(string)[_]: string) $hash_func = sha256_pure<>,
+    ?(function(string)[_]: string) $hash_func = null,
   )[ctx $hash_func]: bool {
     return $this->validate($secret_key, $unix_timestamp, $hash_func) ===
       Validity::VALID;
@@ -47,8 +49,9 @@ final class Token {
   public function validate(
     TSecretKey $secret_key,
     int $unix_timestamp,
-    (function(string)[_]: string) $hash_func = sha256_pure<>,
+    ?(function(string)[_]: string) $hash_func = null,
   )[ctx $hash_func]: Validity {
+    $hash_func ??= sha256_pure<>;
     $hmac = hash_hmac($hash_func, $this->raw, $secret_key)
       |> ($this->base64Encoder)($$);
     if ($this->hmac !== $hmac) {

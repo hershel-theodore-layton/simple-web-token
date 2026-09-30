@@ -17,8 +17,9 @@ function sign_strict(
     ?'url_encoder_for_hmac' => Encoder,
     /*_*/
   ) $encoders = shape(),
-  (function(string)[_]: string) $hash_func = sha256_pure<>,
+  ?(function(string)[_]: string) $hash_func = null,
 )[ctx $hash_func]: string {
+  $hash_func ??= sha256_pure<>;
   $base64_encoder = $encoders['base64_encoder'] ?? base64_encode<>;
   $url_encoder_for_data = $encoders['url_encoder_for_data'] ??
     $encoders['url_encoder_for_hmac'] ??

@@ -51,6 +51,7 @@ final class Token {
     int $unix_timestamp,
     ?(function(string)[_]: string) $hash_func = null,
   )[ctx $hash_func]: Validity {
+    // no need to compute hash, it is going to be invalid anyways
     if ($this->hmac is null) {
       return Validity::INVALID;
     }

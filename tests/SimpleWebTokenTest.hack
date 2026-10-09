@@ -6,6 +6,15 @@ use namespace HTL\{SimpleWebToken, TestChain};
 use function HTL\Expect\expect;
 use function base64_encode, rawurlencode;
 
+final class HashCallCounter {
+  public int $calls = 0;
+
+  public function hash(string $input)[write_props]: string {
+    $this->calls++;
+    return SimpleWebToken\sha256_pure($input);
+  }
+}
+
 <<TestChain\Discover>>
 function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
   $right_now = 1719138710;
@@ -271,6 +280,59 @@ function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
         ->toBeFalse();
       expect($token->validate($secret_key, $right_now))
         ->toEqual(SimpleWebToken\Validity::INVALID);
+    })
+    ->testWith2Params(
+      'test_missing_signature_does_not_hash',
+      () ==> Vec\map(
+        vec['', 'role=reader', 'ExpiresOn=1', 'ExpiresOn=banana'],
+        $raw ==> vec[tuple($raw, false), tuple($raw, true)],
+      )
+        |> Vec\flatten($$),
+      ($raw, $strict)[defaults] ==> {
+        $counter = new HashCallCounter();
+        $token = $strict
+          ? SimpleWebToken\parse_strict($raw)
+          : SimpleWebToken\parse($raw);
+        expect(
+          $token->validate(
+            $secret_key,
+            $right_now,
+            ($input)[write_props] ==> $counter->hash($input),
+          ),
+        )
+          ->toEqual(SimpleWebToken\Validity::INVALID);
+        expect(
+          $token->isOkay(
+            $secret_key,
+            $right_now,
+            ($input)[write_props] ==> $counter->hash($input),
+          ),
+        )
+          ->toBeFalse();
+        expect($counter->calls)->toEqual(0);
+      },
+    )
+    ->test('test_empty_custom_signature_still_hashes', ()[defaults] ==> {
+      $encoder = ($_)[] ==> '';
+      $serialized = SimpleWebToken\sign_strict(
+        vec[tuple('role', 'reader')],
+        $secret_key,
+        shape('base64_encoder' => $encoder),
+      );
+      $token = SimpleWebToken\parse_strict(
+        $serialized,
+        shape('base64_encoder' => $encoder),
+      );
+      $counter = new HashCallCounter();
+      expect(
+        $token->validate(
+          $secret_key,
+          $right_now,
+          ($input)[write_props] ==> $counter->hash($input),
+        ),
+      )
+        ->toEqual(SimpleWebToken\Validity::VALID);
+      expect($counter->calls)->toEqual(2);
     })
     ->test('test_if_you_dont_provide_a_hmac_your_token_is_invalid', () ==> {
       $serialized = SimpleWebToken\sign(vec[tuple('a', 'b')], $secret_key)

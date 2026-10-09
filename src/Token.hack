@@ -51,6 +51,10 @@ final class Token {
     int $unix_timestamp,
     ?(function(string)[_]: string) $hash_func = null,
   )[ctx $hash_func]: Validity {
+    if ($this->hmac is null) {
+      return Validity::INVALID;
+    }
+
     $hash_func ??= sha256_pure<>;
     $hmac = hash_hmac($hash_func, $this->raw, $secret_key)
       |> ($this->base64Encoder)($$);

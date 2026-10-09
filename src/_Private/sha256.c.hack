@@ -225,7 +225,7 @@ function sha_256_write(inout Sha_256 $sha_256, const_uint8_t_x $data)[]: void {
     $len -= $consumed_len;
     $p += $consumed_len;
     if ($sha_256['space_left'] === 0) {
-      consume_chunk(inout $sha_256['h'], $sha_256['chunk'], $data);
+      consume_chunk(inout $sha_256['h'], $sha_256['chunk'], $sha_256['MEM']);
       $sha_256['chunk_pos'] = $sha_256['chunk'];
       $sha_256['space_left'] = SIZE_OF_SHA_256_CHUNK;
     } else {

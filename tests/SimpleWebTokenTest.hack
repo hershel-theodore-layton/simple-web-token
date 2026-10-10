@@ -14,11 +14,8 @@ function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
 
   // Sign raw bytes so fixtures can exercise alternate encodings of field names.
   $parse_signed = (string $raw, bool $strict) ==> {
-    $hmac = SimpleWebToken\hash_hmac(
-      SimpleWebToken\sha256_pure<>,
-      $raw,
-      $secret_key,
-    )
+    $hmac =
+      SimpleWebToken\hash_hmac(SimpleWebToken\sha256_pure<>, $raw, $secret_key)
       |> base64_encode($$);
     $serialized = $raw.'&HMACSHA256='.($strict ? rawurlencode($hmac) : $hmac);
     return $strict
@@ -78,15 +75,16 @@ function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
           '9223372036854775808',
           '-9223372036854775809',
         ],
-        $expires_on ==> vec[tuple($expires_on, false), tuple($expires_on, true)],
+        $expires_on ==>
+          vec[tuple($expires_on, false), tuple($expires_on, true)],
       )
         |> Vec\flatten($$),
       ($expires_on, $strict) ==> {
         $fields = vec[tuple(SimpleWebToken\Token::EXPIRES_ON, $expires_on)];
         $token = $strict
           ? SimpleWebToken\parse_strict(
-            SimpleWebToken\sign_strict($fields, $secret_key),
-          )
+              SimpleWebToken\sign_strict($fields, $secret_key),
+            )
           : SimpleWebToken\parse(SimpleWebToken\sign($fields, $secret_key));
         expect($token->validate($secret_key, $right_now))
           ->toEqual(SimpleWebToken\Validity::INVALID);
@@ -116,8 +114,8 @@ function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
         ];
         $token = $strict
           ? SimpleWebToken\parse_strict(
-            SimpleWebToken\sign_strict($fields, $secret_key),
-          )
+              SimpleWebToken\sign_strict($fields, $secret_key),
+            )
           : SimpleWebToken\parse(SimpleWebToken\sign($fields, $secret_key));
         expect($token->validate($secret_key, $right_now))
           ->toEqual(SimpleWebToken\Validity::INVALID);
@@ -181,11 +179,11 @@ function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
         $fields = vec[tuple('Issuer', 'one'), tuple('Audience', 'one')];
         $token = $strict
           ? SimpleWebToken\parse_strict(
-            SimpleWebToken\sign_strict($fields, $secret_key).$suffix,
-          )
+              SimpleWebToken\sign_strict($fields, $secret_key).$suffix,
+            )
           : SimpleWebToken\parse(
-            SimpleWebToken\sign($fields, $secret_key).$suffix,
-          );
+              SimpleWebToken\sign($fields, $secret_key).$suffix,
+            );
         expect($token->validate($secret_key, $right_now))
           ->toEqual(SimpleWebToken\Validity::INVALID);
         expect($token->isOkay($secret_key, $right_now))->toBeFalse();

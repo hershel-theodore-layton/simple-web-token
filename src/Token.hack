@@ -70,7 +70,9 @@ final class Token {
       return Validity::INVALID;
     }
 
-    foreach (vec[static::ISSUER, static::AUDIENCE, static::EXPIRES_ON] as $name) {
+    foreach (
+      vec[static::ISSUER, static::AUDIENCE, static::EXPIRES_ON] as $name
+    ) {
       if (C\contains_key($this->nonUnique, $name)) {
         return Validity::INVALID;
       }

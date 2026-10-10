@@ -42,7 +42,7 @@ function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
       ) {
         expect($validate($hmac))->toEqual(SimpleWebToken\Validity::INVALID);
       }
-      foreach (vec[0, 22, 43] as $offset) {
+      foreach (vec[0, 22, 42, 43] as $offset) {
         $replacement = $signature[$offset] === 'A' ? 'B' : 'A';
         $changed = Str\slice($signature, 0, $offset).
           $replacement.

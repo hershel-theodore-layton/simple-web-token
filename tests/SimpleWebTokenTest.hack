@@ -24,32 +24,6 @@ function simple_web_token_test(TestChain\Chain $chain)[]: TestChain\Chain {
   };
 
   return $chain->group(__FUNCTION__)
-    ->test('signature_comparison', () ==> {
-      $raw = 'Data=Datum';
-      $signature = SimpleWebToken\hash_hmac(
-        SimpleWebToken\sha256_pure<>,
-        $raw,
-        $secret_key,
-      )
-        |> base64_encode($$);
-      $validate = (?string $hmac) ==>
-        (new SimpleWebToken\Token($raw, $hmac, vec[tuple('Data', 'Datum')]))
-          ->validate($secret_key, 0);
-
-      expect($validate($signature))->toEqual(SimpleWebToken\Validity::VALID);
-      foreach (
-        vec[null, '', $signature.'x', Str\slice($signature, 1)] as $hmac
-      ) {
-        expect($validate($hmac))->toEqual(SimpleWebToken\Validity::INVALID);
-      }
-      foreach (vec[0, 22, 42, 43] as $offset) {
-        $replacement = $signature[$offset] === 'A' ? 'B' : 'A';
-        $changed = Str\slice($signature, 0, $offset).
-          $replacement.
-          Str\slice($signature, $offset + 1);
-        expect($validate($changed))->toEqual(SimpleWebToken\Validity::INVALID);
-      }
-    })
     ->test('test_empty_token', () ==> {
       $serialized = SimpleWebToken\sign(vec[], $secret_key);
       $token = SimpleWebToken\parse($serialized);

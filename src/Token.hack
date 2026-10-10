@@ -2,7 +2,7 @@
 namespace HTL\SimpleWebToken;
 
 use namespace HH\Lib\{C, Dict, Str, Vec};
-use function base64_encode;
+use function base64_encode, hash_equals;
 
 final class Token {
   const string ISSUER = 'Issuer';
@@ -59,7 +59,7 @@ final class Token {
     $hash_func ??= sha256_pure<>;
     $hmac = hash_hmac($hash_func, $this->raw, $secret_key)
       |> ($this->base64Encoder)($$);
-    if ($this->hmac !== $hmac) {
+    if (!hash_equals($hmac, $this->hmac)) {
       return Validity::INVALID;
     }
 

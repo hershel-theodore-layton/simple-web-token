@@ -4,41 +4,85 @@ _An implementation of the Simple Web Token specification._
 
 ### Usage
 
+`Token::validate()` returns `Validity::VALID`, `EXPIRED`, or `INVALID`;
+`isOkay()` is true only for `VALID`.
+
+`VALID` means the signature is correct, reserved claims have acceptable
+multiplicity, and `ExpiresOn` is valid and unexpired **when present**. It does
+not check `Issuer` or `Audience` values, or require expiry. Applications must
+apply those policies themselves, especially when services share signing keys.
+
+This example requires the expected issuer, audience, and expiry. Its key store
+is an application-controlled allowlist; use secret storage for the real keys.
+
 ```HACK
-// This example assumes you have some `$your_key_store`,
-// which maps key names to keys.
+namespace Example;
 
-$serialized = SimpleWebToken\sign_strict(
-  vec[
-    tuple('com.example.user_id', '4'),
-    tuple(SimpleWebToken\Token::EXPIRES_ON, (string)(\time() + 300)),
-    tuple('com.example.secret_key_used', '#1')
-  ],
-  SimpleWebToken\this_is_the_secret_key($your_key_store->load('#1')),
-);
+use namespace HTL\SimpleWebToken;
 
-$token = SimpleWebToken\parse_strict($serialized);
+function accepted_user_id(
+  string $serialized,
+  dict<string, SimpleWebToken\TSecretKey> $allowed_keys,
+  int $now,
+): string {
+  $token = SimpleWebToken\parse_strict($serialized);
+  $claims = $token->getUniqueKeys();
 
-$key = $your_key_store->load(
-  $token->getUniqueKeys() |> idx($$, 'com.example.secret_key_used', 'default')
-);
+  // Claims are untrusted here. The identifier may only select an allowed key.
+  // Missing, repeated, or unknown identifiers are rejected, without a fallback.
+  $key_id = $claims['com.example.secret_key_used'] ?? null;
+  if ($key_id is null || $key_id === '') {
+    throw new \InvalidArgumentException('Missing or repeated key identifier');
+  }
+  $key = $allowed_keys[$key_id] ?? null;
+  if ($key is null || !$token->isOkay($key, $now)) {
+    throw new \InvalidArgumentException('Invalid token or unknown key');
+  }
 
-$state = $token->validate($key, \time());
+  if (
+    ($claims[SimpleWebToken\Token::ISSUER] ?? '') !== 'example-issuer' ||
+    ($claims[SimpleWebToken\Token::AUDIENCE] ?? '') !== 'example-service' ||
+    !\array_key_exists(SimpleWebToken\Token::EXPIRES_ON, $claims)
+  ) {
+    throw new \InvalidArgumentException('Token does not satisfy application policy');
+  }
 
-switch ($state) {
-  case SimpleWebToken\Validity::VALID:
-  case SimpleWebToken\Validity::EXPIRED:
-  case SimpleWebToken\Validity::INVALID:
+  $user_id = $claims['com.example.user_id'] ?? null;
+  if ($user_id is null) {
+    throw new \InvalidArgumentException('Missing user ID');
+  }
+  return $user_id;
 }
 
-// Or the shorthand
-$token->isOkay($key, \time()); // This returns `true` for `::VALID` only.
+<<__EntryPoint>>
+function example(): void {
+  // Issuance is separate from accepting a received token.
+  $allowed_keys = dict[
+    '#1' => SimpleWebToken\this_is_the_secret_key('replace-with-a-stored-secret'),
+  ];
+  $now = \time();
+  $serialized = SimpleWebToken\sign_strict(
+    vec[
+      tuple(SimpleWebToken\Token::ISSUER, 'example-issuer'),
+      tuple(SimpleWebToken\Token::AUDIENCE, 'example-service'),
+      tuple(SimpleWebToken\Token::EXPIRES_ON, (string)($now + 300)),
+      tuple('com.example.secret_key_used', '#1'),
+      tuple('com.example.user_id', '4'),
+    ],
+    $allowed_keys['#1'],
+  );
+  echo accepted_user_id($serialized, $allowed_keys, $now);
+}
 ```
 
-`Issuer`, `Audience`, and `ExpiresOn` may occur at most once. This addresses a
-weakness, where a user controlled claim may collide with one of these reserved
-claims. Mixing user controller claims with developer controller claims is not
-recommended. Claims with the name `HMACSHA256` are rejected.
+Malformed serialized input can make `parse_strict()` throw. Handle parsing and
+policy failures at the application's authentication boundary.
+
+`Issuer`, `Audience`, and `ExpiresOn` may occur at most once. Claims named
+`HMACSHA256` are rejected by validation. Keep application-controlled reserved
+claims separate from user-supplied claims. Signing serializes and signs its
+input; it does not validate reserved claims. For example, signing a claim named
+`HMACSHA256` produces a token that validation rejects.
 
 ### Performance vs. purity
 

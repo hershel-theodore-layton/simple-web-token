@@ -4,6 +4,8 @@ namespace HTL\SimpleWebToken;
 use function urlencode;
 
 /**
+ * @param $hash_func must return the 32-byte raw binary SHA-256 digest.
+ *
  * !!!Not spec-compliant!!! HMAC should be encoded/decoded
  *
  * @deprecated Please use sign_strict(). This function may be removed in a

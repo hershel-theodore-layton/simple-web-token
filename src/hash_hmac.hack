@@ -26,7 +26,7 @@ function this_is_the_secret_key(string $string)[]: TSecretKey {
  * If you are using a version of HHVM with a pure implementation of `\hash()`,
  * you can forward calls to that instead.
  *
- * @param $hash_func returns its hash as binary (not hex or base64).
+ * @param $hash_func must return the 32-byte raw binary SHA-256 digest.
  * @see `SimpleWebToken\sha256_pure<>`, `SimpleWebToken\sha256_native<>`
  */
 function hash_hmac(

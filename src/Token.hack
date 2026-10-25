@@ -37,6 +37,9 @@ final class Token {
     return $this->unique;
   }
 
+  /**
+   * @param $hash_func must return the 32-byte raw binary SHA-256 digest.
+   */
   public function isOkay(
     TSecretKey $secret_key,
     int $unix_timestamp,
@@ -46,6 +49,9 @@ final class Token {
       Validity::VALID;
   }
 
+  /**
+   * @param $hash_func must return the 32-byte raw binary SHA-256 digest.
+   */
   public function validate(
     TSecretKey $secret_key,
     int $unix_timestamp,
